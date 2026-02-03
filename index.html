@@ -1060,44 +1060,45 @@
     
     <!-- Toast -->
     <div class="toast" id="toast"></div>
-    
+
+    <!-- ES Module: Sync Services -->
+    <script type="module" src="js/app.js"></script>
+
     <script>
         // ============================================
         // КОНФИГУРАЦИЯ И ХРАНИЛИЩЕ
         // ============================================
         
+        // Configuration (sync-related config moved to js/app.js)
         const CONFIG = {
-            SCRIPT_URL: localStorage.getItem('scriptUrl') || '',
             STORAGE_KEYS: {
                 CLIENTS: 'therapy_clients',
                 SESSIONS: 'therapy_sessions',
                 SCRIPT_URL: 'scriptUrl',
-                EXCHANGE_RATES: 'therapy_exchange_rates',
-                SYNC_QUEUE: 'therapy_sync_queue',
-                DELETED_IDS: 'therapy_deleted_ids'
+                EXCHANGE_RATES: 'therapy_exchange_rates'
             },
-            MAX_URL_LENGTH: 1800, // Безопасный лимит для URL
             CURRENCIES: {
                 USD: { symbol: '$', name: 'Доллар США' },
                 EUR: { symbol: '€', name: 'Евро' },
                 PLN: { symbol: 'zł', name: 'Злотый' }
             }
         };
-        
+
+        // Application state (sync state moved to SyncManager)
         let clients = [];
         let sessions = [];
-        let syncQueue = [];
-        let deletedIds = { clients: [], sessions: [] };
         let currentScreen = 'sessionsScreen';
         let currentPeriod = 'week';
-        let isOnline = false;
-        let isSyncing = false;
         let exchangeRates = {
             USD: 1,
             EUR: 0.92,
             PLN: 4.02,
             lastUpdated: null
         };
+
+        // Expose data to global scope for SyncManager access
+        window.clients = clients;
+        window.sessions = sessions;
         
         // ============================================
         // ИНИЦИАЛИЗАЦИЯ
@@ -1105,45 +1106,23 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             loadLocalData();
-            loadSyncQueue();
             loadExchangeRates();
-            checkConnection();
             setupEventListeners();
-            setupOnlineOfflineListeners();
             renderAll();
             fetchExchangeRates();
-            
+
             // Set default date to today
             document.getElementById('sessionDate').valueAsDate = new Date();
+
+            // Initialize sync (handled by app.js module)
+            // Small delay to ensure module is loaded
+            setTimeout(() => {
+                if (typeof window.checkConnectionAndSync === 'function') {
+                    window.checkConnectionAndSync();
+                }
+            }, 100);
         });
-        
-        function setupOnlineOfflineListeners() {
-            // Слушаем изменения состояния сети
-            window.addEventListener('online', () => {
-                console.log('Network online');
-                checkConnection();
-            });
-            
-            window.addEventListener('offline', () => {
-                console.log('Network offline');
-                isOnline = false;
-                updateConnectionUI(false, 'Офлайн режим');
-            });
-        }
-        
-        function updateConnectionUI(online, text) {
-            const dot = document.getElementById('connectionDot');
-            const textEl = document.getElementById('connectionText');
-            const dotSessions = document.getElementById('connectionDotSessions');
-            const textSessions = document.getElementById('connectionTextSessions');
-            
-            const className = online ? 'status-dot online' : 'status-dot offline';
-            if (dot) dot.className = className;
-            if (dotSessions) dotSessions.className = className;
-            if (textEl) textEl.textContent = text;
-            if (textSessions) textSessions.textContent = text;
-        }
-        
+
         function loadLocalData() {
             const savedClients = localStorage.getItem(CONFIG.STORAGE_KEYS.CLIENTS);
             const savedSessions = localStorage.getItem(CONFIG.STORAGE_KEYS.SESSIONS);
@@ -1155,46 +1134,13 @@
         function saveLocalData() {
             localStorage.setItem(CONFIG.STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
             localStorage.setItem(CONFIG.STORAGE_KEYS.SESSIONS, JSON.stringify(sessions));
+            // Keep global references in sync
+            window.clients = clients;
+            window.sessions = sessions;
         }
-        
-        function loadSyncQueue() {
-            const savedQueue = localStorage.getItem(CONFIG.STORAGE_KEYS.SYNC_QUEUE);
-            const savedDeleted = localStorage.getItem(CONFIG.STORAGE_KEYS.DELETED_IDS);
-            
-            syncQueue = savedQueue ? JSON.parse(savedQueue) : [];
-            deletedIds = savedDeleted ? JSON.parse(savedDeleted) : { clients: [], sessions: [] };
-        }
-        
-        function saveSyncQueue() {
-            localStorage.setItem(CONFIG.STORAGE_KEYS.SYNC_QUEUE, JSON.stringify(syncQueue));
-            localStorage.setItem(CONFIG.STORAGE_KEYS.DELETED_IDS, JSON.stringify(deletedIds));
-        }
-        
-        function addToSyncQueue(action, data) {
-            // Удаляем предыдущие операции с тем же ID для избежания дубликатов
-            const id = data.id;
-            if (id) {
-                syncQueue = syncQueue.filter(item => {
-                    const itemId = item.data?.id;
-                    return itemId !== id;
-                });
-            }
-            
-            syncQueue.push({
-                action,
-                data,
-                timestamp: new Date().toISOString()
-            });
-            
-            saveSyncQueue();
-        }
-        
-        function clearSyncQueue() {
-            syncQueue = [];
-            deletedIds = { clients: [], sessions: [] };
-            saveSyncQueue();
-        }
-        
+        // Expose saveLocalData to global scope for SyncManager
+        window.saveLocalData = saveLocalData;
+
         function loadExchangeRates() {
             const saved = localStorage.getItem(CONFIG.STORAGE_KEYS.EXCHANGE_RATES);
             if (saved) {
@@ -1243,280 +1189,9 @@
         function formatMoneyWithCurrency(amount, currency) {
             return `${new Intl.NumberFormat('ru-RU').format(Math.round(amount))} ${getCurrencySymbol(currency)}`;
         }
-        
-        async function checkConnection() {
-            const sheetsStatus = document.getElementById('sheetsStatus');
-            
-            if (!CONFIG.SCRIPT_URL) {
-                updateConnectionUI(false, 'Локальное хранилище');
-                sheetsStatus.textContent = 'Не подключено';
-                isOnline = false;
-                return;
-            }
-            
-            updateConnectionUI(false, 'Подключение...');
-            
-            try {
-                const response = await fetch(CONFIG.SCRIPT_URL + '?action=ping', {
-                    method: 'GET',
-                    mode: 'cors'
-                });
-                
-                if (response.ok) {
-                    const queueCount = syncQueue.length;
-                    const statusText = queueCount > 0 
-                        ? `Google Sheets (очередь: ${queueCount})`
-                        : 'Google Sheets подключён';
-                    
-                    updateConnectionUI(true, statusText);
-                    sheetsStatus.textContent = 'Подключено ✓';
-                    isOnline = true;
-                    
-                    // Сначала обрабатываем очередь, потом синхронизируем
-                    await processSyncQueue();
-                    await syncWithSheets();
-                } else {
-                    throw new Error('Connection failed');
-                }
-            } catch (e) {
-                updateConnectionUI(false, 'Офлайн режим');
-                sheetsStatus.textContent = 'Нет соединения';
-                isOnline = false;
-            }
-        }
-        
+
         // ============================================
-        // СИНХРОНИЗАЦИЯ С GOOGLE SHEETS
-        // ============================================
-        
-        async function processSyncQueue() {
-            if (syncQueue.length === 0 || !isOnline || isSyncing) return;
-            
-            isSyncing = true;
-            const failedItems = [];
-            
-            console.log(`Processing sync queue: ${syncQueue.length} items`);
-            
-            for (const item of syncQueue) {
-                try {
-                    const success = await pushToSheetsInternal(item.action, item.data);
-                    if (!success) {
-                        failedItems.push(item);
-                    }
-                } catch (e) {
-                    console.error('Queue item failed:', e);
-                    failedItems.push(item);
-                }
-            }
-            
-            // Сохраняем только неудавшиеся элементы
-            syncQueue = failedItems;
-            saveSyncQueue();
-            
-            if (failedItems.length > 0) {
-                console.log(`${failedItems.length} items failed, will retry later`);
-            }
-            
-            // Обновляем UI
-            updateConnectionUI(true, 
-                syncQueue.length > 0 
-                    ? `Google Sheets (очередь: ${syncQueue.length})`
-                    : 'Google Sheets подключён'
-            );
-            
-            isSyncing = false;
-        }
-        
-        async function syncWithSheets() {
-            if (!isOnline || !CONFIG.SCRIPT_URL || isSyncing) return;
-            
-            try {
-                // Инициализируем таблицу
-                await fetch(CONFIG.SCRIPT_URL + '?action=init');
-                
-                // Получаем данные из Sheets
-                const response = await fetch(CONFIG.SCRIPT_URL + '?action=getData');
-                const data = await response.json();
-                
-                if (data.error) {
-                    console.error('Sync error from server:', data.error);
-                    return;
-                }
-                
-                if (data.clients && data.sessions) {
-                    mergeData(data);
-                    saveLocalData();
-                    renderAll();
-                }
-            } catch (e) {
-                console.error('Sync error:', e);
-            }
-        }
-        
-        function mergeData(remoteData) {
-            // Умный мерж с учётом удалённых записей
-            const localClientMap = new Map(clients.map(c => [c.id, c]));
-            const localSessionMap = new Map(sessions.map(s => [s.id, s]));
-            
-            // Фильтруем удалённые записи
-            const activeRemoteClients = remoteData.clients.filter(c => !deletedIds.clients.includes(c.id));
-            const activeRemoteSessions = remoteData.sessions.filter(s => !deletedIds.sessions.includes(s.id));
-            
-            activeRemoteClients.forEach(remoteClient => {
-                const localClient = localClientMap.get(remoteClient.id);
-                if (!localClient) {
-                    clients.push(remoteClient);
-                } else {
-                    const localTime = new Date(localClient.updatedAt || 0).getTime();
-                    const remoteTime = new Date(remoteClient.updatedAt || 0).getTime();
-                    if (remoteTime > localTime) {
-                        const index = clients.findIndex(c => c.id === remoteClient.id);
-                        if (index !== -1) {
-                            clients[index] = remoteClient;
-                        }
-                    }
-                }
-            });
-            
-            activeRemoteSessions.forEach(remoteSession => {
-                const localSession = localSessionMap.get(remoteSession.id);
-                if (!localSession) {
-                    sessions.push(remoteSession);
-                } else {
-                    const localTime = new Date(localSession.updatedAt || 0).getTime();
-                    const remoteTime = new Date(remoteSession.updatedAt || 0).getTime();
-                    if (remoteTime > localTime) {
-                        const index = sessions.findIndex(s => s.id === remoteSession.id);
-                        if (index !== -1) {
-                            sessions[index] = remoteSession;
-                        }
-                    }
-                }
-            });
-            
-            // Пушим локальные изменения которые новее
-            clients.forEach(localClient => {
-                const remoteClient = remoteData.clients.find(c => c.id === localClient.id);
-                if (!remoteClient) {
-                    // Локальный клиент не существует в remote - нужно отправить
-                    addToSyncQueue('saveClient', localClient);
-                } else {
-                    const localTime = new Date(localClient.updatedAt || 0).getTime();
-                    const remoteTime = new Date(remoteClient.updatedAt || 0).getTime();
-                    if (localTime > remoteTime) {
-                        addToSyncQueue('saveClient', localClient);
-                    }
-                }
-            });
-            
-            sessions.forEach(localSession => {
-                const remoteSession = remoteData.sessions.find(s => s.id === localSession.id);
-                if (!remoteSession) {
-                    addToSyncQueue('saveSession', localSession);
-                } else {
-                    const localTime = new Date(localSession.updatedAt || 0).getTime();
-                    const remoteTime = new Date(remoteSession.updatedAt || 0).getTime();
-                    if (localTime > remoteTime) {
-                        addToSyncQueue('saveSession', localSession);
-                    }
-                }
-            });
-            
-            // Обрабатываем очередь после мержа
-            if (syncQueue.length > 0 && isOnline) {
-                setTimeout(() => processSyncQueue(), 100);
-            }
-        }
-        
-        function truncateDataForUrl(data) {
-            // Создаём копию данных
-            const truncated = { ...data };
-            
-            // Обрезаем заметки если они слишком длинные
-            if (truncated.notes && truncated.notes.length > 500) {
-                truncated.notes = truncated.notes.substring(0, 500) + '...';
-                console.warn('Notes truncated for URL length limit');
-            }
-            
-            return truncated;
-        }
-        
-        async function pushToSheetsInternal(action, data) {
-            if (!CONFIG.SCRIPT_URL) return false;
-            
-            try {
-                const truncatedData = truncateDataForUrl(data);
-                const params = new URLSearchParams({
-                    action: action,
-                    data: JSON.stringify(truncatedData)
-                });
-                
-                const url = `${CONFIG.SCRIPT_URL}?${params.toString()}`;
-                
-                // Проверяем длину URL
-                if (url.length > CONFIG.MAX_URL_LENGTH) {
-                    console.error('URL too long:', url.length);
-                    // Пробуем ещё больше обрезать
-                    truncatedData.notes = truncatedData.notes ? truncatedData.notes.substring(0, 200) : '';
-                    const shortParams = new URLSearchParams({
-                        action: action,
-                        data: JSON.stringify(truncatedData)
-                    });
-                    const shortUrl = `${CONFIG.SCRIPT_URL}?${shortParams.toString()}`;
-                    
-                    if (shortUrl.length > CONFIG.MAX_URL_LENGTH) {
-                        showToast('Заметка слишком длинная');
-                        return false;
-                    }
-                    
-                    const response = await fetch(shortUrl, { method: 'GET', mode: 'cors' });
-                    const result = await response.json();
-                    return result.success !== false;
-                }
-                
-                const response = await fetch(url, { method: 'GET', mode: 'cors' });
-                const result = await response.json();
-                
-                if (result.error) {
-                    console.error('Server error:', result.error);
-                    return false;
-                }
-                
-                return result.success !== false;
-            } catch (e) {
-                console.error('Push error:', e);
-                return false;
-            }
-        }
-        
-        async function pushToSheets(action, data) {
-            // Добавляем в очередь
-            addToSyncQueue(action, data);
-            
-            // Если онлайн - пробуем сразу отправить
-            if (isOnline && CONFIG.SCRIPT_URL) {
-                const success = await pushToSheetsInternal(action, data);
-                
-                if (success) {
-                    // Удаляем из очереди если успешно
-                    syncQueue = syncQueue.filter(item => {
-                        const itemId = item.data?.id;
-                        return itemId !== data.id;
-                    });
-                    saveSyncQueue();
-                    updateConnectionUI(true, 'Google Sheets подключён');
-                } else {
-                    // Оставляем в очереди
-                    updateConnectionUI(true, `Google Sheets (очередь: ${syncQueue.length})`);
-                    showToast('Сохранено локально, синхронизируется позже');
-                }
-            } else {
-                showToast('Офлайн: сохранено локально');
-            }
-        }
-        
-        // ============================================
-        // НАВИГАЦИЯ
+        // NAVIGATION
         // ============================================
         
         function setupEventListeners() {
@@ -1585,35 +1260,27 @@
             updateClientSelect();
             updateSyncQueueUI();
         }
-        
+        // Expose renderAll to global scope for SyncManager
+        window.renderAll = renderAll;
+
         function updateSyncQueueUI() {
             const queueItem = document.getElementById('syncQueueItem');
             const queueStatus = document.getElementById('syncQueueStatus');
-            
-            if (syncQueue.length > 0) {
+            const queueLength = typeof window.getSyncQueueLength === 'function'
+                ? window.getSyncQueueLength()
+                : 0;
+
+            if (queueLength > 0) {
                 queueItem.style.display = 'flex';
-                queueStatus.textContent = `${syncQueue.length} ${pluralize(syncQueue.length, 'операция', 'операции', 'операций')} в очереди`;
+                queueStatus.textContent = `${queueLength} ${pluralize(queueLength, 'операция', 'операции', 'операций')} в очереди`;
             } else {
                 queueItem.style.display = 'none';
             }
         }
-        
-        async function forceSyncNow() {
-            if (!CONFIG.SCRIPT_URL) {
-                showToast('Сначала настройте Google Sheets');
-                return;
-            }
-            
-            showToast('Синхронизация...');
-            await checkConnection();
-            updateSyncQueueUI();
-            
-            if (syncQueue.length === 0) {
-                showToast('Всё синхронизировано!');
-            } else {
-                showToast(`Осталось в очереди: ${syncQueue.length}`);
-            }
-        }
+        // Expose updateSyncQueueUI to global scope for SyncManager
+        window.updateSyncQueueUI = updateSyncQueueUI;
+
+        // forceSyncNow is now provided by js/app.js
         
         function renderClients() {
             const container = document.getElementById('clientsList');
@@ -1870,16 +1537,15 @@
         function deleteSession() {
             const sessionId = document.getElementById('sessionId').value;
             if (!sessionId) return;
-            
+
             if (confirm('Удалить эту сессию?')) {
                 sessions = sessions.filter(s => s.id !== sessionId);
-                
-                // Отслеживаем удалённый ID для предотвращения восстановления при sync
-                if (!deletedIds.sessions.includes(sessionId)) {
-                    deletedIds.sessions.push(sessionId);
-                    saveSyncQueue();
+
+                // Track deleted ID to prevent resurrection during sync
+                if (typeof window.trackDeleted === 'function') {
+                    window.trackDeleted('sessions', sessionId);
                 }
-                
+
                 saveLocalData();
                 pushToSheets('deleteSession', { id: sessionId });
                 renderAll();
@@ -1890,7 +1556,7 @@
         
         function openSettingsModal() {
             const modal = document.getElementById('settingsModal');
-            document.getElementById('scriptUrl').value = CONFIG.SCRIPT_URL;
+            document.getElementById('scriptUrl').value = localStorage.getItem(CONFIG.STORAGE_KEYS.SCRIPT_URL) || '';
             modal.classList.add('active');
         }
         
@@ -1986,31 +1652,28 @@
         
         function deleteClientFromDetail(clientId) {
             if (confirm('Удалить клиента? Все связанные сессии также будут удалены.')) {
-                // Получаем ID сессий для удаления
+                // Get session IDs to delete
                 const sessionIdsToDelete = sessions.filter(s => s.clientId === clientId).map(s => s.id);
-                
+
                 clients = clients.filter(c => c.id !== clientId);
                 sessions = sessions.filter(s => s.clientId !== clientId);
-                
-                // Отслеживаем удалённые ID для предотвращения восстановления при sync
-                if (!deletedIds.clients.includes(clientId)) {
-                    deletedIds.clients.push(clientId);
+
+                // Track deleted IDs to prevent resurrection during sync
+                if (typeof window.trackDeleted === 'function') {
+                    window.trackDeleted('clients', clientId);
+                    sessionIdsToDelete.forEach(sessionId => {
+                        window.trackDeleted('sessions', sessionId);
+                    });
                 }
-                sessionIdsToDelete.forEach(sessionId => {
-                    if (!deletedIds.sessions.includes(sessionId)) {
-                        deletedIds.sessions.push(sessionId);
-                    }
-                });
-                saveSyncQueue();
-                
+
                 saveLocalData();
-                
-                // Синхронизируем удаление с Google Sheets
+
+                // Sync deletions with Google Sheets
                 pushToSheets('deleteClient', { id: clientId });
                 sessionIdsToDelete.forEach(sessionId => {
                     pushToSheets('deleteSession', { id: sessionId });
                 });
-                
+
                 renderAll();
                 closeClientDetail();
                 showToast('Клиент удалён');
@@ -2115,13 +1778,22 @@
         
         function saveSettings(e) {
             e.preventDefault();
-            
+
             const url = document.getElementById('scriptUrl').value.trim();
-            CONFIG.SCRIPT_URL = url;
             localStorage.setItem(CONFIG.STORAGE_KEYS.SCRIPT_URL, url);
-            
+
+            // Update SyncManager with new URL
+            if (typeof window.updateSyncScriptUrl === 'function') {
+                window.updateSyncScriptUrl(url);
+            }
+
             closeSettingsModal();
-            checkConnection();
+
+            // Check connection with new URL
+            if (typeof window.checkConnectionAndSync === 'function') {
+                window.checkConnectionAndSync();
+            }
+
             showToast('Настройки сохранены');
         }
         
@@ -2269,11 +1941,13 @@
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
-            
+
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 2500);
         }
+        // Expose showToast to global scope for SyncManager
+        window.showToast = showToast;
     </script>
 </body>
 </html>
