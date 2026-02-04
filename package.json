@@ -1,0 +1,13 @@
+{
+  "name": "therapy-helper-app",
+  "version": "1.0.0",
+  "description": "Therapy practice management PWA",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
