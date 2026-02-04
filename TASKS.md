@@ -84,10 +84,10 @@ js/
 **Status:** Complete
 **Priority:** High
 
-Migrated UI to Materialize CSS + Alpine.js (no-build approach).
+Migrated UI to Materialize CSS (no-build approach).
 
 #### Tasks:
-- [x] Add CDN links for Materialize CSS, Material Icons, Alpine.js
+- [x] Add CDN links for Materialize CSS, Material Icons
 - [x] Convert navigation bar to Materialize tabs with Material Icons
 - [x] Convert client/session cards to Materialize cards
 - [x] Convert modals to Materialize bottom-sheet modals
@@ -103,7 +103,6 @@ Migrated UI to Materialize CSS + Alpine.js (no-build approach).
 |---------|---------|-----|
 | Materialize CSS | 1.0.0 | cdnjs.cloudflare.com |
 | Material Icons | - | fonts.googleapis.com |
-| Alpine.js | 3.x | cdn.jsdelivr.net |
 
 ---
 
@@ -127,12 +126,50 @@ Migrated UI to Materialize CSS + Alpine.js (no-build approach).
 
 ---
 
+### Phase 5: Scheduling + Google Calendar Bridge (Future)
+**Status:** Not Started
+**Priority:** High
+
+Add a scheduling layer that syncs with Google Calendar via Apps Script, with two-way sync.
+
+#### Scope Decisions
+- Sync method: Apps Script Calendar Bridge
+- Sync direction: Two-way (app <-> Google Calendar)
+- Calendar: Dedicated calendar (configurable in settings)
+
+#### Tasks
+- [ ] Define Appointment data model and storage keys
+- [ ] Add Schedule screen (agenda list + create/edit modal)
+- [ ] Add appointment CRUD UI and local persistence
+- [ ] Add "Complete appointment" flow that creates a payment session
+- [ ] Store `calendarEventId` on appointments for sync mapping
+- [ ] Extend Settings to save Calendar ID and sync toggle
+- [ ] Create `GoogleCalendarService` (Apps Script endpoints)
+- [ ] Extend SyncManager to handle appointment sync and conflicts
+- [ ] Add sync queue support for appointment changes and deletions
+- [ ] Implement two-way sync merge rules using `updatedAt`
+- [ ] Handle timezone consistently (store ISO with offset)
+- [ ] Update Google Apps Script:
+- [ ] Add endpoints: `getEvents`, `createEvent`, `updateEvent`, `deleteEvent`
+- [ ] Add a Calendar selector or hardcoded calendar ID
+- [ ] Document setup steps and required permissions
+
+#### Acceptance Criteria
+- [ ] App can create, update, and delete calendar events
+- [ ] Events edited in Google Calendar are reflected in the app
+- [ ] Completed appointments generate sessions without duplicates
+- [ ] Offline changes queue and sync when online
+- [ ] No data loss when calendar events are moved or edited
+
+---
+
 ## Backlog
 
 - [ ] Set up local development server configuration
 - [ ] Add unit tests
 - [ ] Consider TypeScript migration
 - [ ] Consider build system (Vite/webpack)
+- [ ] Consider using any JS/TS framework
 
 ---
 
@@ -145,7 +182,7 @@ Migrated UI to Materialize CSS + Alpine.js (no-build approach).
 - Added Materialize datepicker with Russian locale
 - Cleaned up legacy CSS
 
-### 2024 - Phase 1: Google Sheets Integration Refactoring
+### 2026 - Phase 1: Google Sheets Integration Refactoring
 - Created OOP service classes for sync functionality
 - Migrated from inline JS to ES modules
 - Implemented encapsulated state management

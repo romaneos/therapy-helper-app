@@ -1,0 +1,198 @@
+/* App layout and safe areas (Materialize has no equivalents) */
+:root {
+    --safe-bottom: env(safe-area-inset-bottom);
+    --safe-top: env(safe-area-inset-top);
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --accent: #14b8a6;
+    --accent-600: #0f766e;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: rgba(15, 23, 42, 0.08);
+    --radius: 14px;
+}
+
+body {
+    padding-top: var(--safe-top);
+    padding-bottom: calc(60px + var(--safe-bottom));
+    background: var(--bg);
+    color: var(--text);
+}
+
+.app {
+    max-width: 500px;
+    margin: 0 auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.screen {
+    display: none;
+    padding: 16px;
+}
+.screen.active {
+    display: block;
+}
+
+/* Bottom nav (custom; Materialize has no bottom nav) */
+.bottom-nav-wrapper {
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0;
+    right: 0;
+    z-index: 997;
+    padding-bottom: var(--safe-bottom);
+    background-color: var(--surface);
+}
+
+.bottom-nav-wrapper nav {
+    background-color: var(--surface);
+    box-shadow: 0 -8px 24px rgba(2, 6, 23, 0.08);
+}
+
+.bottom-nav-tabs {
+    display: flex;
+    justify-content: space-around;
+    margin: 0;
+    padding-bottom: 0;
+}
+
+.nav-tab-item {
+    flex: 1;
+    list-style: none;
+}
+
+.nav-tab-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 6px;
+    color: #757575 !important;
+    transition: color 0.2s ease;
+    gap: 1px;
+}
+
+.nav-tab-link i {
+    font-size: 20px;
+    margin-bottom: 0;
+}
+
+.nav-tab-link span {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.nav-tab-link.active,
+.nav-tab-link:hover {
+    color: var(--accent) !important;
+}
+
+.nav-tab-link.active::after {
+    content: "";
+    display: block;
+    margin-top: 4px;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+}
+
+.fixed-action-btn {
+    bottom: calc(70px + var(--safe-bottom));
+    right: 16px;
+}
+
+/* Connection status dot (online/offline colors) */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.status-dot.online { background: #4caf50; }
+.status-dot.offline { background: #ff9800; }
+
+#toast-container {
+    bottom: calc(75px + var(--safe-bottom));
+}
+
+/* Session modal: fit viewport, scroll content, keep footer visible */
+#sessionModal.modal {
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+#sessionModal .modal-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+#sessionModal .modal-footer {
+    flex-shrink: 0;
+}
+
+/* Client modal: same layout so content fits, footer visible */
+#clientModal.modal {
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+#clientModal .modal-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+#clientModal .modal-footer {
+    flex-shrink: 0;
+}
+
+/* Compact list cards: less padding, smaller spacing */
+.card.compact {
+    margin-bottom: 8px;
+}
+.card.compact .card-content {
+    padding: 10px 16px;
+}
+.card.compact .card-action {
+    padding: 6px 16px;
+    border-top: 1px solid var(--border);
+}
+
+/* Unified surface + elevation */
+.card,
+.card-panel,
+.collection,
+.modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
+}
+
+/* Buttons and chips: pill + weight */
+.btn,
+.btn-small,
+.btn-floating {
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.chip {
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 0 10px;
+}
+
+.grey-text {
+    color: var(--muted) !important;
+}
+
+.teal {
+    background-color: var(--accent) !important;
+    color: #fff !important;
+}
+
+.teal-text {
+    color: var(--accent) !important;
+    background: transparent !important;
+}
