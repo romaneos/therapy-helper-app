@@ -742,6 +742,14 @@
         .card:nth-child(4) { animation-delay: 150ms; }
         .card:nth-child(5) { animation-delay: 200ms; }
         
+        /* Search Input */
+        .search-input {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            font-size: 15px;
+            background: var(--bg-secondary);
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
@@ -770,7 +778,9 @@
                 <h2 class="section-title">👥 Клиенты</h2>
                 <span class="section-action" onclick="openClientModal()">+ Добавить</span>
             </div>
-            
+
+            <input type="text" class="form-input search-input" id="clientsSearch" placeholder="🔍 Поиск клиентов..." oninput="renderClients()">
+
             <div id="clientsList"></div>
         </section>
         
@@ -785,7 +795,9 @@
                 <h2 class="section-title">📅 Сессии</h2>
                 <span class="section-action" onclick="openSessionModal()">+ Добавить</span>
             </div>
-            
+
+            <input type="text" class="form-input search-input" id="sessionsSearch" placeholder="🔍 Поиск сессий..." oninput="renderSessions()">
+
             <div id="sessionsList"></div>
         </section>
         
@@ -1132,11 +1144,12 @@
         }
         
         function saveLocalData() {
+            // Update local variables from window (in case sync updated them)
+            clients = window.clients || clients;
+            sessions = window.sessions || sessions;
+
             localStorage.setItem(CONFIG.STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
             localStorage.setItem(CONFIG.STORAGE_KEYS.SESSIONS, JSON.stringify(sessions));
-            // Keep global references in sync
-            window.clients = clients;
-            window.sessions = sessions;
         }
         // Expose saveLocalData to global scope for SyncManager
         window.saveLocalData = saveLocalData;
@@ -1254,6 +1267,10 @@
         // ============================================
         
         function renderAll() {
+            // Sync local variables from window (in case sync updated them)
+            clients = window.clients || clients;
+            sessions = window.sessions || sessions;
+
             renderClients();
             renderSessions();
             renderStats();
@@ -1284,19 +1301,26 @@
         
         function renderClients() {
             const container = document.getElementById('clientsList');
-            
-            if (clients.length === 0) {
+            const query = (document.getElementById('clientsSearch')?.value || '').toLowerCase().trim();
+
+            const filtered = clients.filter(client => {
+                if (!query) return true;
+                return client.name.toLowerCase().includes(query)
+                    || (client.notes || '').toLowerCase().includes(query);
+            });
+
+            if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">👥</div>
-                        <div class="empty-title">Нет клиентов</div>
-                        <div class="empty-text">Добавьте первого клиента для начала работы</div>
+                        <div class="empty-icon">${query ? '🔍' : '👥'}</div>
+                        <div class="empty-title">${query ? 'Ничего не найдено' : 'Нет клиентов'}</div>
+                        <div class="empty-text">${query ? 'Попробуйте другой запрос' : 'Добавьте первого клиента для начала работы'}</div>
                     </div>
                 `;
                 return;
             }
-            
-            container.innerHTML = clients.map((client, index) => {
+
+            container.innerHTML = filtered.map((client, index) => {
                 const clientSessions = sessions.filter(s => s.clientId === client.id);
                 const unpaidSessions = clientSessions.filter(s => !s.paid);
                 const debt = unpaidSessions.reduce((sum, s) => sum + Number(s.amount), 0);
@@ -1333,22 +1357,32 @@
         
         function renderSessions() {
             const container = document.getElementById('sessionsList');
-            
-            if (sessions.length === 0) {
+            const query = (document.getElementById('sessionsSearch')?.value || '').toLowerCase().trim();
+
+            // Sort by date descending
+            const sorted = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const filtered = sorted.filter(session => {
+                if (!query) return true;
+                const client = clients.find(c => c.id === session.clientId);
+                const clientName = client ? client.name : '';
+                return clientName.toLowerCase().includes(query)
+                    || (session.notes || '').toLowerCase().includes(query)
+                    || session.date.includes(query);
+            });
+
+            if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">📅</div>
-                        <div class="empty-title">Нет сессий</div>
-                        <div class="empty-text">Добавьте первую сессию</div>
+                        <div class="empty-icon">${query ? '🔍' : '📅'}</div>
+                        <div class="empty-title">${query ? 'Ничего не найдено' : 'Нет сессий'}</div>
+                        <div class="empty-text">${query ? 'Попробуйте другой запрос' : 'Добавьте первую сессию'}</div>
                     </div>
                 `;
                 return;
             }
-            
-            // Sort by date descending
-            const sorted = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            container.innerHTML = sorted.map((session, index) => {
+
+            container.innerHTML = filtered.map((session, index) => {
                 const client = clients.find(c => c.id === session.clientId);
                 const clientName = client ? client.name : 'Неизвестный клиент';
                 const currency = client?.currency || 'USD';
@@ -1909,15 +1943,19 @@
         function filterSessionsByPeriod(sessions, period) {
             const now = new Date();
             let startDate;
-            
+
             switch (period) {
                 case 'week':
+                    // Start from Monday of the current week
                     startDate = new Date(now);
-                    startDate.setDate(now.getDate() - 7);
+                    const day = startDate.getDay();
+                    const diffToMonday = day === 0 ? 6 : day - 1;
+                    startDate.setDate(startDate.getDate() - diffToMonday);
+                    startDate.setHours(0, 0, 0, 0);
                     break;
                 case 'month':
-                    startDate = new Date(now);
-                    startDate.setMonth(now.getMonth() - 1);
+                    // Start from the 1st of the current month
+                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
                     break;
                 case 'year':
                     startDate = new Date(now);
