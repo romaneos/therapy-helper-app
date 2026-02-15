@@ -87,12 +87,11 @@
         }
         
         function saveLocalData() {
-            // Update local variables from window (in case sync updated them)
-            clients = window.clients || clients;
-            sessions = window.sessions || sessions;
-
             localStorage.setItem(CONFIG.STORAGE_KEYS.CLIENTS, JSON.stringify(clients));
             localStorage.setItem(CONFIG.STORAGE_KEYS.SESSIONS, JSON.stringify(sessions));
+            // Keep global references in sync
+            window.clients = clients;
+            window.sessions = sessions;
         }
         // Expose saveLocalData to global scope for SyncManager
         window.saveLocalData = saveLocalData;
@@ -216,10 +215,6 @@
         // ============================================
         
         function renderAll() {
-            // Sync local variables from window (in case sync updated them)
-            clients = window.clients || clients;
-            sessions = window.sessions || sessions;
-
             renderClients();
             renderSessions();
             renderStats();
