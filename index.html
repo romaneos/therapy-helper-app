@@ -32,21 +32,11 @@
         :root {
             --safe-bottom: env(safe-area-inset-bottom);
             --safe-top: env(safe-area-inset-top);
-            --bg: #f5f7fb;
-            --surface: #ffffff;
-            --accent: #14b8a6;
-            --accent-600: #0f766e;
-            --text: #0f172a;
-            --muted: #64748b;
-            --border: rgba(15, 23, 42, 0.08);
-            --radius: 14px;
         }
 
         body {
             padding-top: var(--safe-top);
             padding-bottom: calc(70px + var(--safe-bottom));
-            background: var(--bg);
-            color: var(--text);
         }
 
         .app {
@@ -75,8 +65,8 @@
         }
 
         .bottom-nav-wrapper nav {
-            background-color: var(--surface);
-            box-shadow: 0 -8px 24px rgba(2, 6, 23, 0.08);
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
 
         .bottom-nav-tabs {
@@ -95,35 +85,23 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px 0 8px;
+            padding: 8px 0;
             color: #757575 !important;
             transition: color 0.2s ease;
-            gap: 2px;
         }
 
         .nav-tab-link i {
-            font-size: 22px;
-            margin-bottom: 0;
+            font-size: 24px;
+            margin-bottom: 2px;
         }
 
         .nav-tab-link span {
             font-size: 11px;
-            font-weight: 600;
         }
 
         .nav-tab-link.active,
         .nav-tab-link:hover {
-            color: var(--accent) !important;
-        }
-
-        .nav-tab-link.active::after {
-            content: "";
-            display: block;
-            margin-top: 6px;
-            width: 24px;
-            height: 3px;
-            border-radius: 3px;
-            background: var(--accent);
+            color: #26a69a !important;
         }
 
         .fixed-action-btn {
@@ -168,46 +146,7 @@
         }
         .card.compact .card-action {
             padding: 6px 16px;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Unified surface + elevation */
-        .card,
-        .card-panel,
-        .collection,
-        .modal {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: 0 10px 26px rgba(2, 6, 23, 0.08);
-        }
-
-        /* Buttons and chips: pill + weight */
-        .btn,
-        .btn-small,
-        .btn-floating {
-            border-radius: 999px;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-        }
-
-        .chip {
-            border-radius: 999px;
-            font-weight: 600;
-            padding: 0 10px;
-        }
-
-        .grey-text {
-            color: var(--muted) !important;
-        }
-
-        .teal {
-            background-color: var(--accent) !important;
-            color: #fff !important;
-        }
-
-        .teal-text {
-            color: var(--accent) !important;
-            background: transparent !important;
+            border-top: 1px solid rgba(0,0,0,0.08);
         }
     </style>
 </head>
@@ -221,7 +160,7 @@
             </div>
             
             <div class="row valign-wrapper" style="margin: 24px 0 16px;">
-                <h5 class="col s9" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">groups</i> Клиенты</h5>
+                <h5 class="col s9" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">people</i> Клиенты</h5>
                 <a href="#!" class="col s3 right-align teal-text text-darken-2" onclick="openClientModal(); return false;">+ Добавить</a>
             </div>
             
@@ -236,7 +175,7 @@
             </div>
             
             <div class="row valign-wrapper" style="margin: 24px 0 16px;">
-                <h5 class="col s9" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">event_available</i> Сессии</h5>
+                <h5 class="col s9" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">event</i> Сессии</h5>
                 <a href="#!" class="col s3 right-align teal-text text-darken-2" onclick="openSessionModal(); return false;">+ Добавить</a>
             </div>
             
@@ -246,7 +185,7 @@
         <!-- Stats Screen -->
         <section id="statsScreen" class="screen">
             <div class="row valign-wrapper" style="margin: 24px 0 16px;">
-                <h5 class="col s12" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">insights</i> Статистика</h5>
+                <h5 class="col s12" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">bar_chart</i> Статистика</h5>
             </div>
             
             <div class="input-field col s12" style="margin-bottom: 16px;">
@@ -287,7 +226,7 @@
                 <div class="col s12">
                     <div class="card">
                         <div class="card-content">
-                            <i class="material-icons orange-text text-darken-2" style="font-size: 28px; margin-bottom: 8px;">report_problem</i>
+                            <i class="material-icons orange-text text-darken-2" style="font-size: 28px; margin-bottom: 8px;">warning</i>
                             <span class="card-title" style="font-size: 24px;" id="totalDebt">0</span>
                             <p class="grey-text" style="font-size: 12px; margin-top: 4px;">Общий долг клиентов</p>
                         </div>
@@ -307,7 +246,7 @@
         <!-- Settings Screen -->
         <section id="settingsScreen" class="screen">
             <div class="row" style="margin: 24px 0 16px;">
-                <h5 class="col s12" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">tune</i> Настройки</h5>
+                <h5 class="col s12" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">settings</i> Настройки</h5>
             </div>
             
             <ul class="collection">
@@ -369,25 +308,25 @@
                     <ul class="bottom-nav-tabs">
                         <li class="nav-tab-item">
                             <a href="#!" class="nav-tab-link" data-screen="clientsScreen">
-                                <i class="material-icons">groups</i>
+                                <i class="material-icons">people</i>
                                 <span>Клиенты</span>
                             </a>
                         </li>
                         <li class="nav-tab-item">
                             <a href="#!" class="nav-tab-link active" data-screen="sessionsScreen">
-                                <i class="material-icons">event_available</i>
+                                <i class="material-icons">event</i>
                                 <span>Сессии</span>
                             </a>
                         </li>
                         <li class="nav-tab-item">
                             <a href="#!" class="nav-tab-link" data-screen="statsScreen">
-                                <i class="material-icons">insights</i>
+                                <i class="material-icons">bar_chart</i>
                                 <span>Статистика</span>
                             </a>
                         </li>
                         <li class="nav-tab-item">
                             <a href="#!" class="nav-tab-link" data-screen="settingsScreen">
-                                <i class="material-icons">tune</i>
+                                <i class="material-icons">settings</i>
                                 <span>Настройки</span>
                             </a>
                         </li>
@@ -411,7 +350,7 @@
                 </div>
 
                 <div class="input-field">
-                    <i class="material-icons prefix">credit_card</i>
+                    <i class="material-icons prefix">payments</i>
                     <input type="number" id="clientRate" required>
                     <label for="clientRate">Стоимость сессии</label>
                 </div>
@@ -455,13 +394,13 @@
                 </div>
 
                 <div class="input-field">
-                    <i class="material-icons prefix">event_available</i>
+                    <i class="material-icons prefix">event</i>
                     <input type="text" id="sessionDate" class="datepicker" required>
                     <label for="sessionDate">Дата сессии</label>
                 </div>
 
                 <div class="input-field">
-                    <i class="material-icons prefix">credit_card</i>
+                    <i class="material-icons prefix">payments</i>
                     <input type="number" id="sessionAmount" required>
                     <label for="sessionAmount">Стоимость</label>
                 </div>
@@ -1108,7 +1047,7 @@
                     </div>
                     <div class="col s6">
                         <div class="card-panel center-align" style="padding: 16px;">
-                            <i class="material-icons ${totalDebt > 0 ? 'orange-text' : 'green-text'}">${totalDebt > 0 ? 'report_problem' : 'check_circle'}</i>
+                            <i class="material-icons ${totalDebt > 0 ? 'orange-text' : 'green-text'}">${totalDebt > 0 ? 'warning' : 'check_circle'}</i>
                             <h5 style="margin: 8px 0 4px 0; color: ${totalDebt > 0 ? '#ff9800' : '#4caf50'};">${totalDebt > 0 ? formatMoneyWithCurrency(totalDebt, currency) : 'Нет'}</h5>
                             <span class="grey-text" style="font-size: 12px;">Долг</span>
                         </div>
