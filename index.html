@@ -21,343 +21,163 @@
     
     <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2364b5c6' width='100' height='100' rx='20'/><text x='50' y='68' text-anchor='middle' font-size='50'>🧠</text></svg>">
-
-    <!-- Materialize CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+    
     <style>
-        /* ============================================
-           CUSTOM STYLES - EXTENDING MATERIALIZE
-           ============================================ */
-
-        /* Color Scheme */
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         :root {
-            --primary-color: #26a69a;
-            --primary-dark: #00897b;
-            --primary-light: #b2dfdb;
-            --accent-color: #ff7043;
-            --text-primary: #212121;
-            --text-secondary: #757575;
-            --bg-light: #fafafa;
-            --success: #4caf50;
-            --warning: #ff9800;
-            --danger: #f44336;
-            --safe-bottom: env(safe-area-inset-bottom);
+            --bg-primary: #f2f4f7;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8ecf2;
+            --text-primary: #1a2b3c;
+            --text-secondary: #5a6b7c;
+            --text-tertiary: #8a9bac;
+            --accent: #4a9eb8;
+            --accent-light: #e8f4f8;
+            --accent-gradient: linear-gradient(135deg, #4a9eb8 0%, #6bb8cc 100%);
+            --success: #5cb88f;
+            --success-light: #e8f8f0;
+            --warning: #e8a855;
+            --warning-light: #fef8ec;
+            --danger: #d8636f;
+            --danger-light: #fdf0f1;
+            --shadow-sm: 0 1px 3px rgba(26, 43, 60, 0.06);
+            --shadow-md: 0 4px 12px rgba(26, 43, 60, 0.08);
+            --shadow-lg: 0 8px 24px rgba(26, 43, 60, 0.12);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
         }
-
-        /* Base */
+        
         body {
-            background: var(--bg-light);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
             padding-top: var(--safe-top);
-            padding-bottom: calc(70px + var(--safe-bottom));
+            padding-bottom: calc(80px + var(--safe-bottom));
         }
-
+        
         /* App Container */
         .app {
-            max-width: 500px;
+            max-width: 430px;
             margin: 0 auto;
             min-height: 100vh;
             min-height: 100dvh;
+            position: relative;
         }
-
-        /* Screen Container */
+        
+        /* Screens */
         .screen {
             display: none;
-            padding: 16px;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
         }
+        
         .screen.active {
             display: block;
         }
-
-        /* Bottom Navigation */
-        .bottom-nav-wrapper {
-            position: fixed !important;
-            bottom: 0 !important;
-            top: auto !important;
-            left: 0;
-            right: 0;
-            z-index: 997;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .bottom-nav-materialize {
-            background-color: white;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-
-        .bottom-nav-tabs {
-            display: flex;
-            justify-content: space-around;
-            margin: 0;
-            padding-bottom: var(--safe-bottom);
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
-
-        .nav-tab-item {
-            flex: 1;
-            list-style: none;
-        }
-
-        .nav-tab-link {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px 0;
-            color: var(--text-secondary) !important;
-            transition: all 0.2s ease;
-        }
-
-        .nav-tab-link i {
-            font-size: 24px;
-            margin-bottom: 2px;
-        }
-
-        .nav-tab-link span {
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .nav-tab-link.active,
-        .nav-tab-link:hover {
-            color: var(--primary-color) !important;
-        }
-
-        /* FAB Positioning */
-        .fixed-action-btn {
-            bottom: calc(80px + var(--safe-bottom));
-            right: 16px;
-        }
-
-        /* Card Enhancements */
+        
+        /* Cards */
         .card {
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-
-        .card .card-content {
-            padding: 20px;
-        }
-
-        .card .card-title {
-            font-weight: 500;
-        }
-
-        /* Chips for status badges */
-        .chip.paid {
-            background-color: #c8e6c9;
-            color: #2e7d32;
-        }
-
-        .chip.unpaid {
-            background-color: #fff3e0;
-            color: #ef6c00;
-        }
-
-        /* Modal Enhancements */
-        .modal {
-            border-radius: 16px 16px 0 0;
-            max-height: 90%;
-        }
-
-        .modal.bottom-sheet {
-            max-height: 90vh;
-        }
-
-        .modal .modal-content {
-            padding: 24px;
-        }
-
-        .modal .modal-footer {
-            padding: 16px 24px;
-            background-color: transparent;
-        }
-
-        /* Form Enhancements */
-        .input-field input:focus + label,
-        .input-field textarea:focus + label {
-            color: var(--primary-color) !important;
-        }
-
-        .input-field input:focus,
-        .input-field textarea:focus {
-            border-bottom-color: var(--primary-color) !important;
-            box-shadow: 0 1px 0 0 var(--primary-color) !important;
-        }
-
-        /* Connection Status */
-        .connection-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            border-radius: 16px;
-            background: white;
-            font-size: 12px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .status-dot.online { background: var(--success); }
-        .status-dot.offline { background: var(--warning); }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
             padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            animation: scaleIn 0.3s ease backwards;
         }
-
-        .stat-card.full-width {
-            grid-column: span 2;
+        
+        .card:hover, .card:active {
+            transform: scale(0.98);
+            box-shadow: var(--shadow-md);
         }
-
-        .stat-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 48px 24px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state i {
-            font-size: 64px;
-            opacity: 0.5;
-            margin-bottom: 16px;
-        }
-
-        /* Settings Items */
-        .settings-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .settings-info {
+        
+        .card-header {
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-
-        .settings-icon {
-            font-size: 24px;
-            color: var(--primary-color);
-        }
-
-        /* Date Filter Chips */
-        .date-filters {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .date-filter-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            background: white;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .date-filter-btn.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        /* Debt Items */
-        .debt-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            background: white;
-            border-radius: 8px;
             margin-bottom: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-
-        .debt-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .debt-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #fff3e0;
+        
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
         }
-
-        .debt-amount {
+        
+        .card-icon.blue { background: var(--accent-light); }
+        .card-icon.green { background: var(--success-light); }
+        .card-icon.orange { background: var(--warning-light); }
+        .card-icon.red { background: var(--danger-light); }
+        
+        .card-title {
+            font-size: 17px;
             font-weight: 600;
-            color: var(--warning);
+            color: var(--text-primary);
         }
-    </style>
-
-    <style>
-        /* ============================================
-           LEGACY/UTILITY STYLES
-           ============================================ */
-
-        /* Additional legacy variables used by app-specific components */
-        :root {
-            --bg-tertiary: #e8ecf2;
-            --text-tertiary: #8a9bac;
-            --accent: #26a69a;
-            --accent-light: #e0f2f1;
-            --success-light: #e8f8f0;
-            --warning-light: #fef8ec;
-            --shadow-sm: 0 1px 3px rgba(26, 43, 60, 0.06);
-            --radius-sm: 10px;
-            --radius-md: 16px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 2px;
         }
-
+        
+        .card-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        .card-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--bg-tertiary);
+        }
+        
+        .card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+        
         /* Section Headers */
         .section-header {
             display: flex;
@@ -365,13 +185,13 @@
             align-items: center;
             margin: 24px 0 16px;
         }
-
+        
         .section-title {
             font-size: 20px;
             font-weight: 600;
             color: var(--text-primary);
         }
-
+        
         .section-action {
             font-size: 14px;
             color: var(--accent);
@@ -381,16 +201,16 @@
             border-radius: var(--radius-sm);
             transition: var(--transition);
         }
-
+        
         .section-action:hover {
             background: var(--accent-light);
         }
-
-        /* Legacy Form Styles (for non-Materialize forms) */
+        
+        /* Forms */
         .form-group {
             margin-bottom: 20px;
         }
-
+        
         .form-label {
             display: block;
             font-size: 14px;
@@ -398,71 +218,231 @@
             color: var(--text-secondary);
             margin-bottom: 8px;
         }
-
-        .form-select {
+        
+        .form-input, .form-select, .form-textarea {
             width: 100%;
             padding: 14px 16px;
             border: 2px solid var(--bg-tertiary);
             border-radius: var(--radius-sm);
             font-size: 16px;
             font-family: inherit;
-            background: white;
+            background: var(--bg-secondary);
             color: var(--text-primary);
             transition: var(--transition);
             -webkit-appearance: none;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-light);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%235a6b7c' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
             padding-right: 44px;
         }
-
-        .form-select:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        /* Legacy Buttons (for settings etc.) */
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: none;
-            padding: 10px 16px;
+        
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--bg-tertiary);
             border-radius: var(--radius-sm);
             cursor: pointer;
             transition: var(--transition);
         }
-
-        .btn-secondary:hover {
-            background: #dde1e8;
+        
+        .checkbox-group:hover {
+            border-color: var(--accent);
         }
-
+        
+        .checkbox-group input {
+            display: none;
+        }
+        
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--bg-tertiary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        
+        .checkbox-group input:checked + .checkbox-custom {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        
+        .checkbox-custom::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0;
+            transform: scale(0);
+            transition: var(--transition);
+        }
+        
+        .checkbox-group input:checked + .checkbox-custom::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .checkbox-label {
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(74, 158, 184, 0.3);
+        }
+        
+        .btn-primary:hover, .btn-primary:active {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 158, 184, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-primary);
+        }
+        
         .btn-danger {
             background: var(--danger);
             color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
         }
-
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .stat-card.full-width {
+            grid-column: span 2;
+        }
+        
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+        
+        /* Date Filters */
+        .date-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .date-filter-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .date-filter-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .date-filter-btn:hover:not(.active) {
+            background: var(--bg-tertiary);
+        }
+        
         /* Debt List */
         .debt-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 14px 16px;
-            background: white;
+            background: var(--bg-secondary);
             border-radius: var(--radius-sm);
             margin-bottom: 8px;
             box-shadow: var(--shadow-sm);
         }
-
+        
         .debt-info {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
+        
         .debt-avatar {
             width: 40px;
             height: 40px;
@@ -473,71 +453,304 @@
             justify-content: center;
             font-size: 18px;
         }
-
+        
         .debt-name {
             font-size: 15px;
             font-weight: 500;
             color: var(--text-primary);
         }
-
+        
         .debt-sessions {
             font-size: 13px;
             color: var(--text-tertiary);
         }
-
+        
         .debt-amount {
             font-size: 17px;
             font-weight: 600;
             color: var(--warning);
         }
-
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            padding-bottom: calc(12px + var(--safe-bottom));
+            box-shadow: 0 -4px 20px rgba(26, 43, 60, 0.08);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: var(--radius-sm);
+        }
+        
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+            filter: grayscale(100%);
+            opacity: 0.5;
+            transition: var(--transition);
+        }
+        
+        .nav-item.active .nav-icon {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            transition: var(--transition);
+        }
+        
+        .nav-item.active .nav-label {
+            color: var(--accent);
+        }
+        
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: calc(100px + var(--safe-bottom));
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            border: none;
+            box-shadow: 0 4px 16px rgba(74, 158, 184, 0.4);
+            cursor: pointer;
+            font-size: 28px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 99;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1);
+        }
+        
+        .fab:active {
+            transform: scale(0.95);
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 43, 60, 0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            width: 100%;
+            max-width: 430px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            padding-bottom: calc(24px + var(--safe-bottom));
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
         /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
         .empty-icon {
             font-size: 64px;
             margin-bottom: 16px;
             filter: grayscale(50%);
         }
-
+        
         .empty-title {
             font-size: 18px;
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 8px;
         }
-
+        
         .empty-text {
             font-size: 14px;
             color: var(--text-tertiary);
         }
-
+        
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge.paid {
+            background: var(--success-light);
+            color: var(--success);
+        }
+        
+        .badge.unpaid {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+        
         /* Settings */
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+        
+        .settings-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .settings-icon {
+            font-size: 24px;
+        }
+        
         .settings-text h4 {
             font-size: 15px;
             font-weight: 500;
             color: var(--text-primary);
-            margin: 0;
         }
-
+        
         .settings-text p {
             font-size: 13px;
             color: var(--text-tertiary);
-            margin: 4px 0 0 0;
         }
-
-        /* Toast positioning override for bottom nav */
-        #toast-container {
-            bottom: calc(90px + var(--safe-bottom));
+        
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
         }
-
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .status-dot.online {
+            background: var(--success);
+        }
+        
+        .status-dot.offline {
+            background: var(--warning);
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: calc(120px + var(--safe-bottom));
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-primary);
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 3000;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Animations for list items */
+        .card:nth-child(1) { animation-delay: 0ms; }
+        .card:nth-child(2) { animation-delay: 50ms; }
+        .card:nth-child(3) { animation-delay: 100ms; }
+        .card:nth-child(4) { animation-delay: 150ms; }
+        .card:nth-child(5) { animation-delay: 200ms; }
+        
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
         }
-
+        
         ::-webkit-scrollbar-track {
             background: transparent;
         }
-
+        
         ::-webkit-scrollbar-thumb {
             background: var(--bg-tertiary);
             border-radius: 2px;
@@ -698,175 +911,155 @@
             </div>
         </section>
         
-        <!-- FAB Button (Materialize) -->
-        <div class="fixed-action-btn" id="fabButton">
-            <a class="btn-floating btn-large waves-effect waves-light teal" onclick="handleFabClick()">
-                <i class="material-icons">add</i>
-            </a>
-        </div>
+        <!-- FAB Button -->
+        <button class="fab" id="fabButton" onclick="handleFabClick()">+</button>
         
-        <!-- Bottom Navigation (Materialize) -->
-        <div class="navbar-fixed bottom-nav-wrapper">
-            <nav class="bottom-nav-materialize">
-                <div class="nav-wrapper">
-                    <ul class="bottom-nav-tabs">
-                        <li class="nav-tab-item">
-                            <a href="#!" class="nav-tab-link" data-screen="clientsScreen">
-                                <i class="material-icons">people</i>
-                                <span>Клиенты</span>
-                            </a>
-                        </li>
-                        <li class="nav-tab-item">
-                            <a href="#!" class="nav-tab-link active" data-screen="sessionsScreen">
-                                <i class="material-icons">event</i>
-                                <span>Сессии</span>
-                            </a>
-                        </li>
-                        <li class="nav-tab-item">
-                            <a href="#!" class="nav-tab-link" data-screen="statsScreen">
-                                <i class="material-icons">bar_chart</i>
-                                <span>Статистика</span>
-                            </a>
-                        </li>
-                        <li class="nav-tab-item">
-                            <a href="#!" class="nav-tab-link" data-screen="settingsScreen">
-                                <i class="material-icons">settings</i>
-                                <span>Настройки</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item" data-screen="clientsScreen">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Клиенты</span>
+            </button>
+            <button class="nav-item active" data-screen="sessionsScreen">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Сессии</span>
+            </button>
+            <button class="nav-item" data-screen="statsScreen">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Статистика</span>
+            </button>
+            <button class="nav-item" data-screen="settingsScreen">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Настройки</span>
+            </button>
+        </nav>
     </div>
     
-    <!-- Client Modal (Materialize) -->
-    <div id="clientModal" class="modal bottom-sheet">
-        <div class="modal-content">
-            <h4 id="clientModalTitle">Новый клиент</h4>
+    <!-- Client Modal -->
+    <div class="modal-overlay" id="clientModal">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <h3 class="modal-title" id="clientModalTitle">Новый клиент</h3>
+            
             <form id="clientForm">
                 <input type="hidden" id="clientId">
-
-                <div class="input-field">
-                    <i class="material-icons prefix">person</i>
-                    <input type="text" id="clientName" required>
-                    <label for="clientName">Имя клиента</label>
+                
+                <div class="form-group">
+                    <label class="form-label">Имя клиента</label>
+                    <input type="text" class="form-input" id="clientName" placeholder="Введите имя" required>
                 </div>
-
-                <div class="input-field">
-                    <i class="material-icons prefix">payments</i>
-                    <input type="number" id="clientRate" required>
-                    <label for="clientRate">Стоимость сессии</label>
+                
+                <div class="form-group">
+                    <label class="form-label">Стоимость сессии</label>
+                    <input type="number" class="form-input" id="clientRate" placeholder="100" required>
                 </div>
-
-                <div class="input-field">
-                    <i class="material-icons prefix">currency_exchange</i>
-                    <select id="clientCurrency" required>
+                
+                <div class="form-group">
+                    <label class="form-label">Валюта</label>
+                    <select class="form-select" id="clientCurrency" required>
                         <option value="USD">USD — Доллар США</option>
                         <option value="EUR">EUR — Евро</option>
                         <option value="PLN">PLN — Польский злотый</option>
                     </select>
-                    <label>Валюта</label>
                 </div>
-
-                <div class="input-field">
-                    <i class="material-icons prefix">notes</i>
-                    <textarea id="clientNotes" class="materialize-textarea"></textarea>
-                    <label for="clientNotes">Заметки</label>
+                
+                <div class="form-group">
+                    <label class="form-label">Заметки</label>
+                    <textarea class="form-textarea" id="clientNotes" placeholder="Дополнительная информация..."></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeClientModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
                 </div>
             </form>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-teal btn-flat">Отмена</a>
-            <button type="submit" form="clientForm" class="waves-effect waves-light btn teal">Сохранить</button>
         </div>
     </div>
     
-    <!-- Session Modal (Materialize) -->
-    <div id="sessionModal" class="modal bottom-sheet">
-        <div class="modal-content">
-            <h4 id="sessionModalTitle">Новая сессия</h4>
+    <!-- Session Modal -->
+    <div class="modal-overlay" id="sessionModal">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <h3 class="modal-title" id="sessionModalTitle">Новая сессия</h3>
+            
             <form id="sessionForm">
                 <input type="hidden" id="sessionId">
-
-                <div class="input-field">
-                    <i class="material-icons prefix">person</i>
-                    <select id="sessionClient" required>
-                        <option value="" disabled selected>Выберите клиента</option>
+                
+                <div class="form-group">
+                    <label class="form-label">Клиент</label>
+                    <select class="form-select" id="sessionClient" required>
+                        <option value="">Выберите клиента</option>
                     </select>
-                    <label>Клиент</label>
                 </div>
-
-                <div class="input-field">
-                    <i class="material-icons prefix">event</i>
-                    <input type="text" id="sessionDate" class="datepicker" required>
-                    <label for="sessionDate">Дата сессии</label>
+                
+                <div class="form-group">
+                    <label class="form-label">Дата сессии</label>
+                    <input type="date" class="form-input" id="sessionDate" required>
                 </div>
-
-                <div class="input-field">
-                    <i class="material-icons prefix">payments</i>
-                    <input type="number" id="sessionAmount" required>
-                    <label for="sessionAmount">Стоимость</label>
+                
+                <div class="form-group">
+                    <label class="form-label">Стоимость</label>
+                    <input type="number" class="form-input" id="sessionAmount" placeholder="100" required>
                 </div>
-
-                <p>
-                    <label>
-                        <input type="checkbox" id="sessionPaid" class="filled-in" />
-                        <span>Оплачено</span>
+                
+                <div class="form-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="sessionPaid">
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-label">Оплачено</span>
                     </label>
-                </p>
-
-                <div class="input-field">
-                    <i class="material-icons prefix">notes</i>
-                    <textarea id="sessionNotes" class="materialize-textarea"></textarea>
-                    <label for="sessionNotes">Заметки к сессии</label>
                 </div>
-
-                <button type="button" id="sessionDeleteBtn" class="btn red waves-effect waves-light" style="display: none; margin-top: 16px; width: 100%;" onclick="deleteSession()">
-                    <i class="material-icons left">delete</i>Удалить сессию
-                </button>
+                
+                <div class="form-group">
+                    <label class="form-label">Заметки к сессии</label>
+                    <textarea class="form-textarea" id="sessionNotes" placeholder="Что обсуждали, прогресс..."></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeSessionModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+                
+                <button type="button" id="sessionDeleteBtn" class="btn btn-danger" style="margin-top: 12px; display: none;" onclick="deleteSession()">🗑️ Удалить сессию</button>
             </form>
         </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-teal btn-flat">Отмена</a>
-            <button type="submit" form="sessionForm" class="waves-effect waves-light btn teal">Сохранить</button>
+    </div>
+    
+    <!-- Client Detail Modal -->
+    <div class="modal-overlay" id="clientDetailModal">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div id="clientDetailContent"></div>
         </div>
     </div>
-
-    <!-- Client Detail Modal (Materialize) -->
-    <div id="clientDetailModal" class="modal bottom-sheet">
-        <div class="modal-content" id="clientDetailContent"></div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-teal btn-flat">Закрыть</a>
-        </div>
-    </div>
-
+    
     <!-- Settings Modal -->
-    <!-- Settings Modal (Materialize) -->
-    <div id="settingsModal" class="modal bottom-sheet">
-        <div class="modal-content">
-            <h4>Настройка Google Sheets</h4>
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <h3 class="modal-title">Настройка Google Sheets</h3>
+            
             <form id="settingsForm">
-                <div class="input-field">
-                    <i class="material-icons prefix">link</i>
-                    <input type="url" id="scriptUrl" placeholder="https://script.google.com/macros/s/...">
-                    <label for="scriptUrl">URL Google Apps Script</label>
+                <div class="form-group">
+                    <label class="form-label">URL Google Apps Script</label>
+                    <input type="url" class="form-input" id="scriptUrl" placeholder="https://script.google.com/macros/s/...">
                 </div>
-
-                <div class="card-panel teal lighten-5">
-                    <span class="teal-text text-darken-2">
-                        <i class="material-icons tiny">info</i>
-                        Для настройки синхронизации создайте Google Apps Script и вставьте URL развёрнутого веб-приложения.
-                        Инструкция находится в файле google-apps-script.js
-                    </span>
+                
+                <p style="font-size: 13px; color: var(--text-tertiary); margin-bottom: 20px; line-height: 1.6;">
+                    📌 Для настройки синхронизации создайте Google Apps Script и вставьте URL развёрнутого веб-приложения.
+                    Инструкция находится в файле google-apps-script.js
+                </p>
+                
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
                 </div>
             </form>
         </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-teal btn-flat">Отмена</a>
-            <button type="submit" form="settingsForm" class="waves-effect waves-light btn teal">Сохранить</button>
-        </div>
     </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
     <!-- ES Module: Sync Services -->
     <script type="module" src="js/app.js"></script>
@@ -918,27 +1111,8 @@
             renderAll();
             fetchExchangeRates();
 
-            // Initialize Materialize datepicker
-            const dateElems = document.querySelectorAll('.datepicker');
-            M.Datepicker.init(dateElems, {
-                format: 'yyyy-mm-dd',
-                autoClose: true,
-                defaultDate: new Date(),
-                setDefaultDate: true,
-                i18n: {
-                    cancel: 'Отмена',
-                    done: 'Готово',
-                    months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-                    monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-                    weekdays: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-                    weekdaysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-                    weekdaysAbbrev: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С']
-                }
-            });
-
-            // Set default date value for session date
-            const today = new Date();
-            document.getElementById('sessionDate').value = today.toISOString().split('T')[0];
+            // Set default date to today
+            document.getElementById('sessionDate').valueAsDate = new Date();
 
             // Initialize sync (handled by app.js module)
             // Small delay to ensure module is loaded
@@ -1021,14 +1195,13 @@
         // ============================================
         
         function setupEventListeners() {
-            // Navigation (Materialize bottom tabs)
-            document.querySelectorAll('.nav-tab-link').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
                     const screenId = item.dataset.screen;
                     switchScreen(screenId);
-
-                    document.querySelectorAll('.nav-tab-link').forEach(n => n.classList.remove('active'));
+                    
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                     item.classList.add('active');
                 });
             });
@@ -1111,51 +1284,47 @@
         
         function renderClients() {
             const container = document.getElementById('clientsList');
-
+            
             if (clients.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <i class="material-icons large">people_outline</i>
-                        <h5>Нет клиентов</h5>
-                        <p class="grey-text">Добавьте первого клиента для начала работы</p>
+                        <div class="empty-icon">👥</div>
+                        <div class="empty-title">Нет клиентов</div>
+                        <div class="empty-text">Добавьте первого клиента для начала работы</div>
                     </div>
                 `;
                 return;
             }
-
+            
             container.innerHTML = clients.map((client, index) => {
                 const clientSessions = sessions.filter(s => s.clientId === client.id);
                 const unpaidSessions = clientSessions.filter(s => !s.paid);
                 const debt = unpaidSessions.reduce((sum, s) => sum + Number(s.amount), 0);
                 const currency = client.currency || 'USD';
-
+                
                 return `
-                    <div class="card hoverable" onclick="openClientDetail('${client.id}')">
-                        <div class="card-content">
-                            <div class="row valign-wrapper" style="margin-bottom: 8px;">
-                                <div class="col s2">
-                                    <i class="material-icons circle teal lighten-4 teal-text" style="padding: 10px; border-radius: 50%;">person</i>
-                                </div>
-                                <div class="col s10">
-                                    <span class="card-title" style="font-size: 18px; margin: 0;">${escapeHtml(client.name)}</span>
-                                    <p class="grey-text" style="margin: 0;">${formatMoneyWithCurrency(client.rate, currency)} / сессия</p>
-                                </div>
+                    <div class="card" style="animation-delay: ${index * 50}ms" onclick="openClientDetail('${client.id}')">
+                        <div class="card-header">
+                            <div class="card-icon blue">👤</div>
+                            <div>
+                                <div class="card-title">${escapeHtml(client.name)}</div>
+                                <div class="card-subtitle">${formatMoneyWithCurrency(client.rate, currency)} / сессия</div>
                             </div>
-                            ${client.notes ? `<p class="grey-text text-darken-1" style="margin: 8px 0 0 0; font-size: 14px;">${escapeHtml(client.notes)}</p>` : ''}
                         </div>
-                        <div class="card-action" style="padding: 12px 20px;">
-                            <div class="row" style="margin: 0;">
-                                <div class="col s6">
-                                    <span class="grey-text"><i class="material-icons tiny">event</i> ${clientSessions.length} ${pluralize(clientSessions.length, 'сессия', 'сессии', 'сессий')}</span>
-                                </div>
-                                <div class="col s6 right-align">
-                                    ${debt > 0 ? `
-                                        <span class="chip unpaid" style="margin: 0;">Долг: ${formatMoneyWithCurrency(debt, currency)}</span>
-                                    ` : `
-                                        <span class="chip paid" style="margin: 0;"><i class="material-icons tiny">check</i> Без долгов</span>
-                                    `}
-                                </div>
+                        ${client.notes ? `<div class="card-content">${escapeHtml(client.notes)}</div>` : ''}
+                        <div class="card-meta">
+                            <div class="card-meta-item">
+                                📅 ${clientSessions.length} ${pluralize(clientSessions.length, 'сессия', 'сессии', 'сессий')}
                             </div>
+                            ${debt > 0 ? `
+                                <div class="card-meta-item" style="color: var(--warning);">
+                                    💳 Долг: ${formatMoneyWithCurrency(debt, currency)}
+                                </div>
+                            ` : `
+                                <div class="card-meta-item" style="color: var(--success);">
+                                    ✓ Без долгов
+                                </div>
+                            `}
                         </div>
                     </div>
                 `;
@@ -1168,47 +1337,41 @@
             if (sessions.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <i class="material-icons large">event_busy</i>
-                        <h5>Нет сессий</h5>
-                        <p class="grey-text">Добавьте первую сессию</p>
+                        <div class="empty-icon">📅</div>
+                        <div class="empty-title">Нет сессий</div>
+                        <div class="empty-text">Добавьте первую сессию</div>
                     </div>
                 `;
                 return;
             }
-
+            
             // Sort by date descending
             const sorted = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date));
-
+            
             container.innerHTML = sorted.map((session, index) => {
                 const client = clients.find(c => c.id === session.clientId);
                 const clientName = client ? client.name : 'Неизвестный клиент';
                 const currency = client?.currency || 'USD';
-
+                
                 return `
-                    <div class="card hoverable" onclick="openSessionModal('${session.id}')">
-                        <div class="card-content">
-                            <div class="row valign-wrapper" style="margin-bottom: 0;">
-                                <div class="col s2">
-                                    <i class="material-icons circle ${session.paid ? 'green lighten-4 green-text' : 'orange lighten-4 orange-text'}" style="padding: 10px; border-radius: 50%;">
-                                        ${session.paid ? 'check_circle' : 'schedule'}
-                                    </i>
-                                </div>
-                                <div class="col s6">
-                                    <span class="card-title" style="font-size: 16px; margin: 0;">${escapeHtml(clientName)}</span>
-                                    <p class="grey-text" style="margin: 0; font-size: 13px;">${formatDate(session.date)}</p>
-                                </div>
-                                <div class="col s4 right-align">
-                                    <span class="chip ${session.paid ? 'paid' : 'unpaid'}" style="margin: 0; font-size: 11px;">
-                                        ${session.paid ? 'Оплачено' : 'Не оплачено'}
-                                    </span>
-                                </div>
+                    <div class="card" style="animation-delay: ${index * 50}ms" onclick="openSessionModal('${session.id}')">
+                        <div class="card-header">
+                            <div class="card-icon ${session.paid ? 'green' : 'orange'}">
+                                ${session.paid ? '✓' : '⏳'}
                             </div>
-                            ${session.notes ? `<p class="grey-text text-darken-1" style="margin: 12px 0 0 0; font-size: 14px;">${escapeHtml(session.notes)}</p>` : ''}
-                        </div>
-                        <div class="card-action" style="padding: 12px 20px;">
-                            <span class="teal-text text-darken-1" style="font-weight: 500;">
-                                <i class="material-icons tiny">payments</i> ${formatMoneyWithCurrency(session.amount, currency)}
+                            <div style="flex: 1;">
+                                <div class="card-title">${escapeHtml(clientName)}</div>
+                                <div class="card-subtitle">${formatDate(session.date)}</div>
+                            </div>
+                            <span class="badge ${session.paid ? 'paid' : 'unpaid'}">
+                                ${session.paid ? '✓ Оплачено' : 'Не оплачено'}
                             </span>
+                        </div>
+                        ${session.notes ? `<div class="card-content">${escapeHtml(session.notes)}</div>` : ''}
+                        <div class="card-meta">
+                            <div class="card-meta-item">
+                                💰 ${formatMoneyWithCurrency(session.amount, currency)}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1308,19 +1471,14 @@
         // ============================================
         
         function openClientModal(clientId = null) {
-            const modalEl = document.getElementById('clientModal');
-            const modal = M.Modal.getInstance(modalEl);
+            const modal = document.getElementById('clientModal');
             const title = document.getElementById('clientModalTitle');
             const form = document.getElementById('clientForm');
-
+            
             form.reset();
             document.getElementById('clientId').value = '';
-
-            // Reset and reinitialize select
-            const currencySelect = document.getElementById('clientCurrency');
-            currencySelect.value = 'USD';
-            M.FormSelect.init(currencySelect);
-
+            document.getElementById('clientCurrency').value = 'USD';
+            
             if (clientId) {
                 const client = clients.find(c => c.id === clientId);
                 if (client) {
@@ -1328,73 +1486,54 @@
                     document.getElementById('clientId').value = client.id;
                     document.getElementById('clientName').value = client.name;
                     document.getElementById('clientRate').value = client.rate;
-                    currencySelect.value = client.currency || 'USD';
+                    document.getElementById('clientCurrency').value = client.currency || 'USD';
                     document.getElementById('clientNotes').value = client.notes || '';
-                    // Update labels for filled inputs
-                    M.updateTextFields();
-                    M.FormSelect.init(currencySelect);
                 }
             } else {
                 title.textContent = 'Новый клиент';
             }
-
-            modal.open();
+            
+            modal.classList.add('active');
         }
-
+        
         function closeClientModal() {
-            const modalEl = document.getElementById('clientModal');
-            const modal = M.Modal.getInstance(modalEl);
-            modal.close();
+            document.getElementById('clientModal').classList.remove('active');
         }
-
+        
         function openSessionModal(sessionId = null) {
-            const modalEl = document.getElementById('sessionModal');
-            const modal = M.Modal.getInstance(modalEl);
+            const modal = document.getElementById('sessionModal');
             const title = document.getElementById('sessionModalTitle');
             const form = document.getElementById('sessionForm');
             const deleteBtn = document.getElementById('sessionDeleteBtn');
-
+            
             form.reset();
             document.getElementById('sessionId').value = '';
-
-            // Set today's date using Materialize datepicker format
-            const today = new Date();
-            const dateStr = today.toISOString().split('T')[0];
-            document.getElementById('sessionDate').value = dateStr;
-
-            // Reinitialize client select
-            const clientSelect = document.getElementById('sessionClient');
-            M.FormSelect.init(clientSelect);
-
+            document.getElementById('sessionDate').valueAsDate = new Date();
+            
             if (sessionId) {
                 const session = sessions.find(s => s.id === sessionId);
                 if (session) {
                     title.textContent = 'Редактировать сессию';
                     document.getElementById('sessionId').value = session.id;
-                    clientSelect.value = session.clientId;
+                    document.getElementById('sessionClient').value = session.clientId;
                     document.getElementById('sessionDate').value = session.date;
                     document.getElementById('sessionAmount').value = session.amount;
                     document.getElementById('sessionPaid').checked = session.paid;
                     document.getElementById('sessionNotes').value = session.notes || '';
                     deleteBtn.style.display = 'block';
-                    // Update labels and selects
-                    M.updateTextFields();
-                    M.FormSelect.init(clientSelect);
                 }
             } else {
                 title.textContent = 'Новая сессия';
                 deleteBtn.style.display = 'none';
             }
-
-            modal.open();
+            
+            modal.classList.add('active');
         }
-
+        
         function closeSessionModal() {
-            const modalEl = document.getElementById('sessionModal');
-            const modal = M.Modal.getInstance(modalEl);
-            modal.close();
+            document.getElementById('sessionModal').classList.remove('active');
         }
-
+        
         function deleteSession() {
             const sessionId = document.getElementById('sessionId').value;
             if (!sessionId) return;
@@ -1414,103 +1553,96 @@
                 showToast('Сессия удалена');
             }
         }
-
+        
         function openSettingsModal() {
-            const modalEl = document.getElementById('settingsModal');
-            const modal = M.Modal.getInstance(modalEl);
+            const modal = document.getElementById('settingsModal');
             document.getElementById('scriptUrl').value = localStorage.getItem(CONFIG.STORAGE_KEYS.SCRIPT_URL) || '';
-            M.updateTextFields();
-            modal.open();
+            modal.classList.add('active');
         }
-
+        
         function closeSettingsModal() {
-            const modalEl = document.getElementById('settingsModal');
-            const modal = M.Modal.getInstance(modalEl);
-            modal.close();
+            document.getElementById('settingsModal').classList.remove('active');
         }
         
         function openClientDetail(clientId) {
             const client = clients.find(c => c.id === clientId);
             if (!client) return;
-
+            
             const currency = client.currency || 'USD';
             const clientSessions = sessions
                 .filter(s => s.clientId === clientId)
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
-
+            
             const unpaidSessions = clientSessions.filter(s => !s.paid);
             const totalDebt = unpaidSessions.reduce((sum, s) => sum + Number(s.amount), 0);
-
+            const totalPaid = clientSessions.filter(s => s.paid).reduce((sum, s) => sum + Number(s.amount), 0);
+            
             const content = document.getElementById('clientDetailContent');
             content.innerHTML = `
-                <div class="center-align" style="margin-bottom: 24px;">
-                    <i class="material-icons circle teal lighten-4 teal-text" style="font-size: 48px; padding: 16px; border-radius: 50%;">person</i>
-                    <h4 style="margin: 12px 0 4px 0;">${escapeHtml(client.name)}</h4>
-                    <p class="grey-text">${formatMoneyWithCurrency(client.rate, currency)} / сессия</p>
-                    ${client.notes ? `<p class="grey-text text-darken-1" style="font-size: 14px;">${escapeHtml(client.notes)}</p>` : ''}
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <div style="width: 72px; height: 72px; background: var(--accent-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px;">👤</div>
+                    <h3 style="font-size: 24px; font-weight: 700; color: var(--text-primary);">${escapeHtml(client.name)}</h3>
+                    <p style="font-size: 15px; color: var(--text-secondary); margin-top: 4px;">${formatMoneyWithCurrency(client.rate, currency)} / сессия</p>
+                    ${client.notes ? `<p style="font-size: 14px; color: var(--text-tertiary); margin-top: 8px; padding: 0 20px;">${escapeHtml(client.notes)}</p>` : ''}
                 </div>
-
-                <div class="row">
-                    <div class="col s6">
-                        <div class="card-panel center-align" style="padding: 16px;">
-                            <i class="material-icons teal-text">event</i>
-                            <h5 style="margin: 8px 0 4px 0;">${clientSessions.length}</h5>
-                            <span class="grey-text" style="font-size: 12px;">Всего сессий</span>
-                        </div>
+                
+                <div class="stats-grid" style="margin-bottom: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-value">${clientSessions.length}</div>
+                        <div class="stat-label">Всего сессий</div>
                     </div>
-                    <div class="col s6">
-                        <div class="card-panel center-align" style="padding: 16px;">
-                            <i class="material-icons ${totalDebt > 0 ? 'orange-text' : 'green-text'}">${totalDebt > 0 ? 'warning' : 'check_circle'}</i>
-                            <h5 style="margin: 8px 0 4px 0; color: ${totalDebt > 0 ? '#ff9800' : '#4caf50'};">${totalDebt > 0 ? formatMoneyWithCurrency(totalDebt, currency) : 'Нет'}</h5>
-                            <span class="grey-text" style="font-size: 12px;">Долг</span>
-                        </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">${totalDebt > 0 ? '⚠️' : '✅'}</div>
+                        <div class="stat-value" style="color: ${totalDebt > 0 ? 'var(--warning)' : 'var(--success)'};">${totalDebt > 0 ? formatMoneyWithCurrency(totalDebt, currency) : 'Нет'}</div>
+                        <div class="stat-label">Долг</div>
                     </div>
                 </div>
-
-                <div class="row" style="margin-bottom: 20px;">
-                    <div class="col s6">
-                        <a class="waves-effect waves-light btn-flat teal-text" style="width: 100%;" onclick="editClientFromDetail('${client.id}')">
-                            <i class="material-icons left">edit</i>Изменить
-                        </a>
-                    </div>
-                    <div class="col s6">
-                        <a class="waves-effect waves-light btn-flat red-text" style="width: 100%;" onclick="deleteClientFromDetail('${client.id}')">
-                            <i class="material-icons left">delete</i>Удалить
-                        </a>
-                    </div>
+                
+                <div class="btn-group" style="margin-bottom: 20px;">
+                    <button class="btn btn-secondary" onclick="editClientFromDetail('${client.id}')">✏️ Редактировать</button>
+                    <button class="btn btn-danger" onclick="deleteClientFromDetail('${client.id}')">🗑️ Удалить</button>
                 </div>
-
+                
                 ${clientSessions.length > 0 ? `
-                    <h6 class="grey-text text-darken-2" style="margin-bottom: 12px;">История сессий</h6>
-                    <ul class="collection">
+                    <div style="margin-top: 16px;">
+                        <h4 style="font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">История сессий</h4>
                         ${clientSessions.map(session => `
-                            <li class="collection-item avatar" style="cursor: pointer;" onclick="openSessionModal('${session.id}'); closeClientDetail();">
-                                <i class="material-icons circle ${session.paid ? 'green' : 'orange'}">${session.paid ? 'check' : 'schedule'}</i>
-                                <span class="title">${formatDate(session.date)}</span>
-                                <p class="grey-text" style="font-size: 12px;">${session.notes ? escapeHtml(session.notes.substring(0, 30)) + (session.notes.length > 30 ? '...' : '') : 'Без заметок'}</p>
-                                <span class="secondary-content">
-                                    <span style="color: ${session.paid ? '#4caf50' : '#ff9800'}; font-weight: 500;">${formatMoneyWithCurrency(session.amount, currency)}</span>
-                                </span>
-                            </li>
+                            <div class="debt-item" style="margin-bottom: 8px;" onclick="openSessionModal('${session.id}'); closeClientDetail();">
+                                <div class="debt-info">
+                                    <div class="debt-avatar" style="background: ${session.paid ? 'var(--success-light)' : 'var(--warning-light)'};">
+                                        ${session.paid ? '✓' : '⏳'}
+                                    </div>
+                                    <div>
+                                        <div class="debt-name">${formatDate(session.date)}</div>
+                                        <div class="debt-sessions">${session.notes ? escapeHtml(session.notes.substring(0, 30)) + (session.notes.length > 30 ? '...' : '') : 'Без заметок'}</div>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="debt-amount" style="color: ${session.paid ? 'var(--success)' : 'var(--warning)'};">${formatMoneyWithCurrency(session.amount, currency)}</div>
+                                    <span class="badge ${session.paid ? 'paid' : 'unpaid'}" style="font-size: 11px;">
+                                        ${session.paid ? 'Оплачено' : 'Не оплачено'}
+                                    </span>
+                                </div>
+                            </div>
                         `).join('')}
-                    </ul>
+                    </div>
                 ` : `
-                    <div class="center-align grey-text" style="padding: 32px;">
-                        <i class="material-icons" style="font-size: 48px; opacity: 0.5;">event_busy</i>
-                        <p>Нет сессий</p>
+                    <div class="empty-state" style="padding: 20px;">
+                        <div class="empty-icon" style="font-size: 40px;">📅</div>
+                        <div class="empty-title">Нет сессий</div>
+                        <div class="empty-text">У этого клиента ещё не было сессий</div>
                     </div>
                 `}
+                
+                <button class="btn btn-secondary" style="margin-top: 16px;" onclick="closeClientDetail()">Закрыть</button>
             `;
-
-            const modalEl = document.getElementById('clientDetailModal');
-            const modal = M.Modal.getInstance(modalEl);
-            modal.open();
+            
+            document.getElementById('clientDetailModal').classList.add('active');
         }
-
+        
         function closeClientDetail() {
-            const modalEl = document.getElementById('clientDetailModal');
-            const modal = M.Modal.getInstance(modalEl);
-            modal.close();
+            document.getElementById('clientDetailModal').classList.remove('active');
         }
         
         function editClientFromDetail(clientId) {
@@ -1806,23 +1938,16 @@
         }
         
         function showToast(message) {
-            M.toast({html: message, displayLength: 2500});
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
         }
         // Expose showToast to global scope for SyncManager
         window.showToast = showToast;
-    </script>
-
-    <!-- Materialize JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- Initialize Materialize Components -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all Materialize components
-            M.AutoInit();
-        });
     </script>
 </body>
 </html>
