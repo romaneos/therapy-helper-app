@@ -33,33 +33,40 @@
     <div class="app">
         <!-- Clients Screen -->
         <section id="clientsScreen" class="screen">
-            <div class="screen-header">
-                <div class="row valign-wrapper" style="margin: 24px 0 16px;">
-                    <h5 class="col s9" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">groups</i> Клиенты</h5>
-                    <a href="#!" class="col s3 right-align teal-text text-darken-2" onclick="openClientModal(); return false;">+ Добавить</a>
-                </div>
+            <div class="card-panel grey lighten-4 valign-wrapper" style="margin-bottom: 16px; padding: 8px 16px;">
+                <span class="status-dot" id="connectionDot"></span>
+                <span id="connectionText" class="grey-text text-darken-1" style="margin-left: 8px; font-size: 12px;">Подключение...</span>
             </div>
+            
+            <div class="row valign-wrapper" style="margin: 24px 0 16px;">
+                <h5 class="col s9" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">groups</i> Клиенты</h5>
+                <a href="#!" class="col s3 right-align teal-text text-darken-2" onclick="openClientModal(); return false;">+ Добавить</a>
+            </div>
+            
             <div id="clientsList"></div>
         </section>
         
         <!-- Sessions Screen -->
         <section id="sessionsScreen" class="screen active">
-            <div class="screen-header">
-                <div class="row valign-wrapper" style="margin: 24px 0 16px;">
-                    <h5 class="col s9" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">event_available</i> Сессии</h5>
-                    <a href="#!" class="col s3 right-align teal-text text-darken-2" onclick="openSessionModal(); return false;">+ Добавить</a>
-                </div>
+            <div class="card-panel grey lighten-4 valign-wrapper" style="margin-bottom: 16px; padding: 8px 16px;">
+                <span class="status-dot" id="connectionDotSessions"></span>
+                <span id="connectionTextSessions" class="grey-text text-darken-1" style="margin-left: 8px; font-size: 12px;">Подключение...</span>
             </div>
+            
+            <div class="row valign-wrapper" style="margin: 24px 0 16px;">
+                <h5 class="col s9" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">event_available</i> Сессии</h5>
+                <a href="#!" class="col s3 right-align teal-text text-darken-2" onclick="openSessionModal(); return false;">+ Добавить</a>
+            </div>
+            
             <div id="sessionsList"></div>
         </section>
         
         <!-- Stats Screen -->
         <section id="statsScreen" class="screen">
-            <div class="screen-header">
-                <div class="row valign-wrapper" style="margin: 24px 0 16px;">
-                    <h5 class="col s12" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">insights</i> Статистика</h5>
-                </div>
+            <div class="row valign-wrapper" style="margin: 24px 0 16px;">
+                <h5 class="col s12" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">insights</i> Статистика</h5>
             </div>
+            
             <div class="input-field col s12" style="margin-bottom: 16px;">
                 <select id="statsCurrency" onchange="renderStats()">
                     <option value="USD">USD — Доллар США</option>
@@ -117,11 +124,10 @@
         
         <!-- Settings Screen -->
         <section id="settingsScreen" class="screen">
-            <div class="screen-header">
-                <div class="row" style="margin: 24px 0 16px;">
-                    <h5 class="col s12" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">tune</i> Настройки</h5>
-                </div>
+            <div class="row" style="margin: 24px 0 16px;">
+                <h5 class="col s12" style="margin: 0;"><i class="material-icons" style="font-size: 24px; vertical-align: middle; margin-right: 6px;">tune</i> Настройки</h5>
             </div>
+            
             <ul class="collection">
                 <li class="collection-item avatar valign-wrapper">
                     <i class="material-icons circle teal lighten-4 teal-text">cloud</i>
@@ -182,21 +188,25 @@
                         <li class="nav-tab-item">
                             <a href="#!" class="nav-tab-link" data-screen="clientsScreen">
                                 <i class="material-icons">groups</i>
+                                <span>Клиенты</span>
                             </a>
                         </li>
                         <li class="nav-tab-item">
                             <a href="#!" class="nav-tab-link active" data-screen="sessionsScreen">
                                 <i class="material-icons">event_available</i>
+                                <span>Сессии</span>
                             </a>
                         </li>
                         <li class="nav-tab-item">
                             <a href="#!" class="nav-tab-link" data-screen="statsScreen">
                                 <i class="material-icons">insights</i>
+                                <span>Статистика</span>
                             </a>
                         </li>
                         <li class="nav-tab-item">
                             <a href="#!" class="nav-tab-link" data-screen="settingsScreen">
                                 <i class="material-icons">tune</i>
+                                <span>Настройки</span>
                             </a>
                         </li>
                     </ul>

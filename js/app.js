@@ -13,8 +13,28 @@ const syncManager = new SyncManager({ scriptUrl });
 // Expose syncManager to global scope for UI code
 window.syncManager = syncManager;
 
+/**
+ * Update connection UI elements
+ * @param {boolean} online - Is online
+ * @param {string} text - Status text
+ */
+function updateConnectionUI(online, text) {
+  const dot = document.getElementById('connectionDot');
+  const textEl = document.getElementById('connectionText');
+  const dotSessions = document.getElementById('connectionDotSessions');
+  const textSessions = document.getElementById('connectionTextSessions');
+
+  const className = online ? 'status-dot online' : 'status-dot offline';
+  if (dot) dot.className = className;
+  if (dotSessions) dotSessions.className = className;
+  if (textEl) textEl.textContent = text;
+  if (textSessions) textSessions.textContent = text;
+}
+
 // Register connection change listener
 syncManager.onConnectionChange((online, text) => {
+  updateConnectionUI(online, text);
+
   // Update settings modal status if visible
   const sheetsStatus = document.getElementById('sheetsStatus');
   if (sheetsStatus) {
@@ -183,6 +203,11 @@ window.addEventListener('online', () => {
       });
     }
   });
+});
+
+window.addEventListener('offline', () => {
+  console.log('Network offline');
+  updateConnectionUI(false, 'Офлайн режим');
 });
 
 console.log('App.js loaded - SyncManager initialized');
