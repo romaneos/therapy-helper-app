@@ -775,7 +775,7 @@
             </div>
             
             <div class="section-header">
-                <h2 class="section-title">👥 Клиенты</h2>
+                <h2 class="section-title">👥 Клиенты <span id="clientsCount" style="color: var(--text-tertiary); font-weight: 400;"></span></h2>
                 <span class="section-action" onclick="openClientModal()">+ Добавить</span>
             </div>
 
@@ -1138,9 +1138,13 @@
         function loadLocalData() {
             const savedClients = localStorage.getItem(CONFIG.STORAGE_KEYS.CLIENTS);
             const savedSessions = localStorage.getItem(CONFIG.STORAGE_KEYS.SESSIONS);
-            
+
             clients = savedClients ? JSON.parse(savedClients) : [];
             sessions = savedSessions ? JSON.parse(savedSessions) : [];
+
+            // Keep window globals in sync so ES modules see cached data immediately
+            window.clients = clients;
+            window.sessions = sessions;
         }
         
         function saveLocalData() {
@@ -1301,6 +1305,8 @@
         
         function renderClients() {
             const container = document.getElementById('clientsList');
+            const countEl = document.getElementById('clientsCount');
+            if (countEl) countEl.textContent = clients.length > 0 ? clients.length : '';
             const query = (document.getElementById('clientsSearch')?.value || '').toLowerCase().trim();
 
             const filtered = clients.filter(client => {
