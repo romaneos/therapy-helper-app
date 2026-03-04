@@ -1435,8 +1435,8 @@
             // Total sessions
             document.getElementById('totalSessions').textContent = filtered.length;
             
-            // Total debt (all unpaid sessions, not filtered by period) - converted to target currency
-            const unpaidSessions = sessions.filter(s => !s.paid);
+            // Total debt (unpaid sessions filtered by period) - converted to target currency
+            const unpaidSessions = filtered.filter(s => !s.paid);
             let totalDebt = 0;
             unpaidSessions.forEach(s => {
                 const client = clients.find(c => c.id === s.clientId);
@@ -1455,14 +1455,14 @@
             }
             
             // Debts by client
-            renderDebts(targetCurrency);
+            renderDebts(targetCurrency, filtered);
         }
         
-        function renderDebts(targetCurrency = 'USD') {
+        function renderDebts(targetCurrency = 'USD', filteredSessions = sessions) {
             const container = document.getElementById('debtsList');
-            
+
             const debts = clients.map(client => {
-                const unpaidSessions = sessions.filter(s => s.clientId === client.id && !s.paid);
+                const unpaidSessions = filteredSessions.filter(s => s.clientId === client.id && !s.paid);
                 const clientCurrency = client.currency || 'USD';
                 const debtInOriginal = unpaidSessions.reduce((sum, s) => sum + Number(s.amount), 0);
                 const debtConverted = convertCurrency(debtInOriginal, clientCurrency, targetCurrency);
